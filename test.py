@@ -250,9 +250,9 @@ def main_worker(args):
     print('Total running time: ', timedelta(seconds=end_time - start_time))
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Mask_CACL")
+    parser = argparse.ArgumentParser(description="CICL")
     # data
-    parser.add_argument('-d', '--dataset', type=str, default='ltcc',
+    parser.add_argument('-d', '--dataset', type=str, default='VC_Clothes',
                         choices=datasets.names())
     parser.add_argument('-b', '--batch-size', type=int, default=64)
     parser.add_argument('-j', '--workers', type=int, default=4)
