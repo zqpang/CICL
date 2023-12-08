@@ -14,21 +14,17 @@ from datetime import timedelta
 import torch
 from torch import nn
 from torch.backends import cudnn
-from torch.utils.data import DataLoader
-import torch.nn.functional as F        
+from torch.utils.data import DataLoader  
 
-from maskcl import datasets
-from maskcl import models
-from maskcl.models.hm import HybridMemory
-from maskcl.models.embeddingmodel import Fusion_model
+from cicl import datasets
+from cicl import models
+from cicl.models.embeddingmodel import Fusion_model
 
-from maskcl.evaluators import Evaluator, extract_features
-from maskcl.utils.data import IterLoader
-from maskcl.utils.data import transforms as T
-from maskcl.utils.data.sampler import RandomMultipleGallerySampler
-from maskcl.utils.data.preprocessor import Preprocessor
-from maskcl.utils.logging import Logger
-from maskcl.utils.serialization import load_checkpoint
+from cicl.evaluators import Evaluator, extract_features
+from cicl.utils.data import transforms as T
+from cicl.utils.data.preprocessor import Preprocessor
+from cicl.utils.logging import Logger
+from cicl.utils.serialization import load_checkpoint
 
 
 import os
@@ -38,46 +34,6 @@ def get_data(name, data_dir):
     root = osp.join(data_dir, name)
     dataset = datasets.create(name, root)
     return dataset
-
-def get_train_loader(args, dataset, height, width, batch_size, workers,
-                    num_instances, iters, trainset=None):
-
-    normalizer = T.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225])
-    train_transformer = T.Compose([
-             T.Resize((height, width), interpolation=3),
-             T.RandomHorizontalFlip(p=0.5),
-             T.Pad(10),
-             T.RandomCrop((height, width)),
-             T.ToTensor(),
-             normalizer,
-	         T.RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406])
-         ])
-    
-    train_transformer2 = T.Compose([
-             T.Resize((height, width), interpolation=3),
-             T.Grayscale(num_output_channels=3),
-             T.RandomHorizontalFlip(p=0.5),
-             T.Pad(10),
-             T.RandomCrop((height, width)),
-             T.ToTensor(),
-             normalizer,
-	         T.RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406]),
-        ])
-
-    train_set = sorted(dataset.train) if trainset is None else sorted(trainset)
-    rmgs_flag = num_instances > 0
-    if rmgs_flag:
-        sampler = RandomMultipleGallerySampler(train_set, num_instances)
-    else:
-        sampler = None
-    train_loader = IterLoader(
-                DataLoader(Preprocessor(train_set, root=None, transform1=train_transformer,transform2 = train_transformer2),
-                            batch_size=batch_size, num_workers=workers, sampler=sampler,
-                            shuffle=not rmgs_flag, pin_memory=True, drop_last=True), length=iters)
-
-    return train_loader
-
 
 
 def get_test_loader(dataset, height, width, batch_size, workers, testset=None):
@@ -100,9 +56,6 @@ def get_test_loader(dataset, height, width, batch_size, workers, testset=None):
         batch_size=batch_size, num_workers=workers,
         shuffle=False, pin_memory=True)
     return test_loader
-
-
-
 
 
 def create_model(args):
@@ -133,9 +86,6 @@ def evaluate_mean(evaluator1, dataset, test_loaders):
     return mAP, cmc_now, cmc_now_10
 
 
-
-
-
 def main():    
     args = parser.parse_args()
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -156,7 +106,7 @@ def main_worker(args):
     start_time = time.monotonic()
     cudnn.benchmark = True
     
-    sys.stdout = Logger(osp.join(args.logs_dir, args.dataset, 'maskcl.txt'))
+    sys.stdout = Logger(osp.join(args.logs_dir, args.dataset, 'test.txt'))
     print("==========\nArgs:{}\n==========".format(args))
 
     #args.data_dir = '/root/pxu1/datasets/{}_all'.format(args.dataset)
@@ -177,42 +127,11 @@ def main_worker(args):
    
     
     model_rgb = create_model(args)
-    #model_mask = create_model(args)
-    
-    
-    '''model_fusion'''
     model_fusion = Fusion_model(model_rgb.module.num_features)
     model_fusion.cuda()
     model_fusion = torch.nn.DataParallel(model_fusion)
-    '''model_fusion'''
     
     evaluator1 = Evaluator(model_rgb)
-    
-    
-    memory_rgb = HybridMemory(model_rgb.module.num_features, len(dataset.train),
-                            temp=args.temp, momentum=args.momentum).cuda()
-    memory_mask = HybridMemory(model_rgb.module.num_features, len(dataset.train),
-                            temp=args.temp, momentum=args.momentum).cuda()
-    memory_black = HybridMemory(model_rgb.module.num_features, len(dataset.train),
-                            temp=args.temp, momentum=args.momentum).cuda()
-    memory_fusion = HybridMemory(model_fusion.module.num_features, len(dataset.train),
-                            temp=args.temp, momentum=args.momentum).cuda()
-    
-    cluster_loader = get_test_loader(dataset, args.height, args.width,
-                                    args.batch_size, args.workers, testset=sorted(dataset.train))
-
-    features, features2, features3, _ = extract_features(model_rgb, cluster_loader, print_freq=50)
-    features = torch.cat([features[f].unsqueeze(0) for f, _, _, _ in sorted(dataset.train)], 0)
-    features2 = torch.cat([features2[f].unsqueeze(0) for f, _, _, _ in sorted(dataset.train)], 0)
-    features3 = torch.cat([features3[f].unsqueeze(0) for f, _, _, _ in sorted(dataset.train)], 0)
-    
-    memory_rgb.features = F.normalize(features, dim=1).cuda()
-    memory_mask.features = F.normalize(features2, dim=1).cuda()
-    memory_black.features = F.normalize(features3, dim=1).cuda()
-    memory_fusion.features = F.normalize(features3, dim=1).cuda()
-    
-    
-    del cluster_loader, features, features2
     
     
 
