@@ -7,6 +7,7 @@ cd CICL
 ```
 
 ## train
+We used 2 GPUs to train our model.
 ```python
 python train.py
 ```
