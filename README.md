@@ -1,5 +1,10 @@
 # CICL
 ## train
-`python train.py`
+
+```python
+python train.py
+```
 ## test
-`python test.py`
+```python
+python test.py
+```
