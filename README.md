@@ -1,5 +1,5 @@
 # CICL
-##train
+## train
 `python train.py`
-##test
+## test
 `python test.py`
