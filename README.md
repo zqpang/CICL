@@ -6,13 +6,13 @@ git clone https://github.com/zqpang/CICL
 cd CICL
 ```
 
-## train
+## Training
 We used 2 GPUs to train our model.
 ```python
 python train.py
 ```
 
-## test
+## Test
 ```python
 python test.py
 ```
