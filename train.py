@@ -520,7 +520,7 @@ if __name__ == '__main__':
                         help="learning rate")
     parser.add_argument('--weight-decay', type=float, default=5e-4)
     parser.add_argument('--epochs', type=int, default=60)
-    parser.add_argument('--iters', type=int, default=400)
+    parser.add_argument('--iters', type=int, default=200)
     parser.add_argument('--step-size', type=int, default=20)
     parser.add_argument('--sic_weight', type=float, default=1,
                         help="loss outputs for sic ")
