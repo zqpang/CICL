@@ -5,12 +5,14 @@
 git clone https://github.com/zqpang/CICL
 cd CICL
 ```
+## Data preparation
+Please modify the "data_dir" in the train.py file.
 
 ## Training
-We used 2 GPUs to train our model.
 ```python
 python train.py
 ```
+We used 2 GPUs to train our model. You can make modifications according to the specific device, with the command -- cuda.
 
 ## Test
 ```python
