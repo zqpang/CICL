@@ -1,5 +1,10 @@
 # CICL
 
+## Environment
+Python >= 3.6
+PyTorch >= 1.1
+faiss == 1.6.3
+
 ## Installation
 ```python
 git clone https://github.com/zqpang/CICL
