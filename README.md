@@ -18,3 +18,7 @@ Please modify the "data_dir" in the train.py file.
 python train.py
 ```
 We used 2 GPUs to train our model. You can make modifications according to the specific device, with the command -- cuda.
+
+
+## Acknowledgements
+Some parts of the code is borrowed from [MaskCL](https://github.com/MingkunLishigure/MaskCL). Thanks to [MaskCL](https://github.com/MingkunLishigure/MaskCL) for the opening source.
