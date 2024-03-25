@@ -13,8 +13,3 @@ Please modify the "data_dir" in the train.py file.
 python train.py
 ```
 We used 2 GPUs to train our model. You can make modifications according to the specific device, with the command -- cuda.
-
-## Test
-```python
-python test.py
-```
