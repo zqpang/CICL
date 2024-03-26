@@ -11,8 +11,6 @@ git clone https://github.com/zqpang/CICL
 cd CICL
 ```
 ## Data preparation
-
-
 Please modify the "data_dir" in the train.py file.
 
 ## Training
