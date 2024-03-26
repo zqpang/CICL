@@ -17,7 +17,9 @@ Please modify the "data_dir" in the train.py file.
 ```python
 python train.py
 ```
-You can make modifications according to the specific device, with the command -- cuda.
+You can make modifications according to the specific device, with the command --cuda.
+
+For convenience in training, we have integrated data augmentation into the code. Researchers can switch data augmentation to offline mode to speed up the training process.
 
 ## Model
 The pre-trained [model](https://pan.baidu.com/s/1_AR-X7WRmgBznWrgCYU9kA)(code: bzkt) is available for access.
