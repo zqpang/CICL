@@ -21,8 +21,5 @@ You can make modifications according to the specific device, with the command --
 
 For convenience in training, we have integrated data augmentation into the code. Researchers can switch data augmentation to offline mode to speed up the training process.
 
-## Model
-The pre-trained [model](https://pan.baidu.com/s/1_AR-X7WRmgBznWrgCYU9kA)(code: bzkt) is available for access.
-
 ## Acknowledgements
 Some parts of the code is borrowed from [MaskCL](https://github.com/MingkunLishigure/MaskCL). Thanks to [MaskCL](https://github.com/MingkunLishigure/MaskCL) for the opening source.
